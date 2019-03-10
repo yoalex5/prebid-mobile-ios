@@ -33,7 +33,7 @@ import ObjectiveC.runtime
     //This flag is set to check if the refresh needs to be made though the user has not invoked the fetch demand after initialization
     private var isInitialCallMade:Bool! = false
     
-    private var adServerObject:AnyObject?
+    private weak var adServerObject:AnyObject?
     
     private var closure: (ResultCode) -> Void
     
