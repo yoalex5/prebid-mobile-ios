@@ -32,7 +32,7 @@ touch "$LOGFILE"
 # all needed architectures).
 xcodebuild -target "${FRAMEWORK_NAME}" -configuration Release -arch arm64 -arch -arch  only_active_arch=yes defines_module=yes -sdk "iphoneos" > "$LOGFILE" 2>&1 || { echo "Error in build check log "$LOGFILE""; exit;}
 
-xcodebuild -target "${FRAMEWORK_NAME}" -configuration Release -arch x86_64 -arch i386 only_active_arch=yes defines_module=yes -sdk "iphonesimulator" > "$LOGFILE" 2>&1 || { echo "Error in build check log "$LOGFILE""; exit;}
+xcodebuild -target "${FRAMEWORK_NAME}" -configuration Release -arch x86_64 only_active_arch=no defines_module=yes -sdk "iphonesimulator" > "$LOGFILE" 2>&1 || { echo "Error in build check log "$LOGFILE""; exit;}
 
 # 5
 # Remove .framework file if exists on Desktop from previous run.
