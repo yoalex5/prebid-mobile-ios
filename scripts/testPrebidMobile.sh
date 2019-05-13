@@ -15,7 +15,7 @@ echo $PWD
 echo "Running swiftlint tests"
 swiftlint --config .swiftlint.yml
 
-#echo "Running integration tests"
+echo "Running integration tests"
 cd ../../example/Swift/PrebidDemo/
 echo $PWD
 xcodebuild -workspace PrebidDemo.xcworkspace test -scheme "PrebidDemoTests" -destination 'platform=iOS Simulator,name=iPhone 8 Plus,OS=12.1' | xcpretty -c local exitcode=${PIPESTATUS[0]}
