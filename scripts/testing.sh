@@ -30,7 +30,7 @@ touch "$LOGFILE"
 # 4
 # Build the framework for device and for simulator (using
 # all needed architectures).
-xcodebuild -target "${FRAMEWORK_NAME}" -configuration Release -arch arm64 only_active_arch=yes defines_module=yes -sdk "iphoneos" > "$LOGFILE" 2>&1 || { errormessage=`/sbin/modprobe -n -v hfsplus 2>&1`; echo $errormessage; echo "Error in build check log "$LOGFILE""; exit 1;}
+xcodebuild -target "${FRAMEWORK_NAME}" -configuration Release -arch arm64 only_active_arch=yes defines_module=yes -sdk "iphoneos" > "$LOGFILE" 2>&1 || { echo "Error in build check log"; exit 1;}
 
 #xcodebuild -target "${FRAMEWORK_NAME}" -configuration Release -arch x86_64 only_active_arch=no defines_module=yes -sdk "iphonesimulator" > "$LOGFILE" 2>&1 || { echo "Error in build check log "$LOGFILE""; exit 1;}
 
