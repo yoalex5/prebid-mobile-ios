@@ -18,7 +18,7 @@ swiftlint --config .swiftlint.yml
 echo "Running integration tests"
 cd ../../example/Swift/PrebidDemo/
 echo $PWD
-set -o pipefail && xcodebuild -workspace PrebidDemo.xcworkspace test -scheme "PrebidDemoTests" -destination 'platform=iOS Simulator,name=iPhone 8 Plus,OS=12.1' | xcpretty
+set -o pipefail && xcodebuild test -workspace PrebidDemo.xcworkspace test -scheme "PrebidDemoTests" -destination 'platform=iOS Simulator,name=iPhone 8 Plus,OS=12.1' | xcpretty
 
 # Make the keychain the default so identities are found
 security default-keychain -s ios-build.keychain
