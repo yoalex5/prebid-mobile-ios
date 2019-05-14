@@ -8,7 +8,7 @@ echo "Running unit tests"
 logFileUnitTests="build/reports/tests.html"
 
 gem install xcpretty
-xcodebuild test -project PrebidMobile.xcodeproj -scheme "PrebidMobileTests" -destination 'platform=iOS Simulator,name=iPhone 8 Plus,OS=11.0.1' | xcpretty -c local exitcode=${PIPESTATUS[0]}
+set -o pipefail && xcodebuild test -project PrebidMobile.xcodeproj -scheme "PrebidMobileTests" -destination 'platform=iOS Simulator,name=iPhone 8 Plus,OS=11.0.1' | xcpretty
 
 cd ../src/PrebidMobile/
 echo $PWD
@@ -18,7 +18,7 @@ swiftlint --config .swiftlint.yml
 echo "Running integration tests"
 cd ../../example/Swift/PrebidDemo/
 echo $PWD
-xcodebuild -workspace PrebidDemo.xcworkspace test -scheme "PrebidDemoTests" -destination 'platform=iOS Simulator,name=iPhone 8 Plus,OS=12.1' | xcpretty -c local exitcode=${PIPESTATUS[0]}
+set -o pipefail && xcodebuild -workspace PrebidDemo.xcworkspace test -scheme "PrebidDemoTests" -destination 'platform=iOS Simulator,name=iPhone 8 Plus,OS=12.1' | xcpretty
 
 # Make the keychain the default so identities are found
 security default-keychain -s ios-build.keychain
