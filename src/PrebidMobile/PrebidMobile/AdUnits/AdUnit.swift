@@ -30,7 +30,7 @@ import ObjectiveC.runtime
 
     private var adServerObject: AnyObject?
 
-    private var closure: (ResultCode) -> Void
+    private var closure: (ResultCode, CGSize) -> Void
 
     //notification flag set to check if the prebid response is received within the specified time
     var didReceiveResponse: Bool! = false
@@ -39,30 +39,31 @@ import ObjectiveC.runtime
     var timeOutSignalSent: Bool! = false
 
     init(configId: String, size: CGSize) {
-        self.closure = {_ in return}
+        self.closure = {_,_ in return}
         prebidConfigId = configId
         adSizes.append(size)
         identifier = UUID.init().uuidString
         super.init()
     }
 
-    dynamic public func fetchDemand(adObject: AnyObject, completion: @escaping(_ result: ResultCode) -> Void) {
+    dynamic public func fetchDemand(adObject: AnyObject, completion: @escaping(_ result: ResultCode, _ size: CGSize) -> Void) {
 
         Utils.shared.removeHBKeywords(adObject: adObject)
 
+        let cgSize = CGSize()
         for size in adSizes {
             if (size.width < 0 || size.height < 0) {
-                completion(ResultCode.prebidInvalidSize)
+                completion(ResultCode.prebidInvalidSize, cgSize)
                 return
             }
         }
 
         if (prebidConfigId.isEmpty || (prebidConfigId.trimmingCharacters(in: CharacterSet.whitespaces)).count == 0) {
-            completion(ResultCode.prebidInvalidConfigId)
+            completion(ResultCode.prebidInvalidConfigId, cgSize)
             return
         }
         if (Prebid.shared.prebidServerAccountId.isEmpty || (Prebid.shared.prebidServerAccountId.trimmingCharacters(in: CharacterSet.whitespaces)).count == 0) {
-            completion(ResultCode.prebidInvalidAccountId)
+            completion(ResultCode.prebidInvalidAccountId, cgSize)
             return
         }
 
@@ -82,12 +83,25 @@ import ObjectiveC.runtime
             if (bidResponse != nil) {
                 if (!self.timeOutSignalSent) {
                     Utils.shared.validateAndAttachKeywords (adObject: adObject, bidResponse: bidResponse!)
-                    completion(resultCode)
+                    
+                    let keywords = bidResponse!.customKeywords
+                    
+                    guard let size = keywords["hb_size"] else {
+                        return
+                    }
+                    
+                    let sizeArr = size.characters.split{$0 == "x"}.map(String.init)
+                    let width = CGFloat(NumberFormatter().number(from: sizeArr[0])!)
+                    let height = CGFloat(NumberFormatter().number(from: sizeArr[1])!)
+                    
+                    let gcSize = CGSize(width: width, height: height)
+                    
+                    completion(resultCode, gcSize)
                 }
 
             } else {
                 if (!self.timeOutSignalSent) {
-                    completion(resultCode)
+                    completion(resultCode, cgSize)
                 }
             }
         }
@@ -95,7 +109,7 @@ import ObjectiveC.runtime
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(.PB_Request_Timeout), execute: {
             if (!self.didReceiveResponse) {
                 self.timeOutSignalSent = true
-                completion(ResultCode.prebidDemandTimedOut)
+                completion(ResultCode.prebidDemandTimedOut, cgSize)
 
             }
         })

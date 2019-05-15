@@ -58,7 +58,7 @@ class InterstitialViewController: UIViewController, GADInterstitialDelegate, MPI
         dfpInterstitial = DFPInterstitial(adUnitID: "/19968336/PrebidMobileValidator_Interstitial")
         dfpInterstitial.delegate = self
         request.testDevices = [ kGADSimulatorID]
-        adUnit.fetchDemand(adObject: self.request) { (resultCode: ResultCode) in
+        adUnit.fetchDemand(adObject: self.request) { (resultCode: ResultCode, size: CGSize) in
             print("Prebid demand fetch for DFP \(resultCode.name())")
             self.dfpInterstitial!.load(self.request)
         }
@@ -77,7 +77,7 @@ class InterstitialViewController: UIViewController, GADInterstitialDelegate, MPI
         self.mopubInterstitial.delegate = self
 
         // Do any additional setup after loading the view, typically from a nib.
-        adUnit.fetchDemand(adObject: mopubInterstitial!) { (resultCode: ResultCode) in
+        adUnit.fetchDemand(adObject: mopubInterstitial!) { (resultCode: ResultCode, size: CGSize) in
             print("Prebid demand fetch for mopub \(resultCode.name())")
 
             self.mopubInterstitial.loadAd()
