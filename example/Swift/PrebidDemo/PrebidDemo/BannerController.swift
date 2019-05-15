@@ -48,7 +48,9 @@ class BannerController: UIViewController, GADBannerViewDelegate, MPAdViewDelegat
 
         if (adServerName == "DFP") {
             print("entered \(adServerName) loop" )
-            loadDFPBanner(bannerUnit: bannerUnit)
+//            loadDFPBanner(bannerUnit: bannerUnit)
+            
+            testLoadDFPBannerRubicon()
 
         } else if (adServerName == "MoPub") {
             print("entered \(adServerName) loop" )
@@ -62,6 +64,30 @@ class BannerController: UIViewController, GADBannerViewDelegate, MPAdViewDelegat
         bannerUnit?.stopAutoRefresh()
     }
 
+    func testLoadDFPBannerRubicon() {
+        Prebid.shared.prebidServerHost = PrebidHost.Rubicon
+        Prebid.shared.prebidServerAccountId = "1001"
+        let bannerUnit = BannerAdUnit(configId: "1001-1", size: CGSize(width: 300, height: 250))
+        bannerUnit.addAdditionalSize(sizes: [CGSize(width: 728, height: 90)])
+        
+        dfpBanner = DFPBannerView()
+        dfpBanner.adUnitID = "/5300653/test_adunit_pavliuchyk_300x250_puc_ucTagData_prebid-server.rubiconproject.com"
+        
+        dfpBanner.rootViewController = self
+        dfpBanner.delegate = self
+        dfpBanner.backgroundColor = .red
+        
+        appBannerView.addSubview(dfpBanner)
+        
+        let request = DFPRequest()
+        bannerUnit.fetchDemand(adObject: request) { [weak self] (resultCode: ResultCode, size: CGSize) in
+            print("Prebid demand fetch for DFP \(resultCode.name())")
+            
+            self?.dfpBanner.adSize = GADAdSizeFromCGSize(size)
+            self?.dfpBanner.load(request)
+        }
+    }
+    
     func loadDFPBanner(bannerUnit: AdUnit) {
         print("Google Mobile Ads SDK version: \(DFPRequest.sdkVersion())")
         dfpBanner = DFPBannerView(adSize: kGADAdSizeMediumRectangle)
@@ -72,7 +98,7 @@ class BannerController: UIViewController, GADBannerViewDelegate, MPAdViewDelegat
         appBannerView.addSubview(dfpBanner)
         request.testDevices = [ kGADSimulatorID, "cc7ca766f86b43ab6cdc92bed424069b"]
 
-        bannerUnit.fetchDemand(adObject: self.request) { [weak self] (resultCode: ResultCode) in
+        bannerUnit.fetchDemand(adObject: self.request) { [weak self] (resultCode: ResultCode, size: CGSize) in
             print("Prebid demand fetch for DFP \(resultCode.name())")
             self?.dfpBanner!.load(self?.request)
         }
@@ -93,7 +119,7 @@ class BannerController: UIViewController, GADBannerViewDelegate, MPAdViewDelegat
         appBannerView.addSubview(mopubBanner!)
 
         // Do any additional setup after loading the view, typically from a nib.
-        bannerUnit.fetchDemand(adObject: mopubBanner!) { (resultCode: ResultCode) in
+        bannerUnit.fetchDemand(adObject: mopubBanner!) { (resultCode: ResultCode, size: CGSize) in
             print("Prebid demand fetch for mopub \(resultCode.name())")
 
             self.mopubBanner!.loadAd()
