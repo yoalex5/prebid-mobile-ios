@@ -14,12 +14,14 @@
  */
 
 import Foundation
+import WebKit
 
 public class Utils: NSObject {
 
     /**
      * The class is created as a singleton object & used
      */
+    @objc
     public static let shared = Utils()
 
     /**
@@ -84,9 +86,7 @@ public class Utils: NSObject {
 
                 }
             }
-
         }
-
     }
 }
 
@@ -139,9 +139,17 @@ public class Utils: NSObject {
             adObject.setValue( targetingKeywordsString, forKey: "keywords")
 
         }
+    }
+}
+
+    @available(iOS, deprecated, message: "Please migrate to - AdViewUtils.findPrebidCreativeSize(_:success:failure:)")
+    public func findPrebidCreativeSize(_ adView: UIView, completion: @escaping (CGSize?) -> Void) {
+
+        AdViewUtils.findPrebidCreativeSize(adView, success: completion) { (error) in
+            Log.warn("Missing failure handler, please migrate to - AdViewUtils.findPrebidCreativeSize(_:success:failure:)")
+            completion(nil) // backwards compatibility
+        }
 
     }
-
-}
 
 }

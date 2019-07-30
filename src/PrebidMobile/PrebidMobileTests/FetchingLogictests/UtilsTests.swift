@@ -525,4 +525,5 @@ class UtilsTests: XCTestCase {
             XCTAssertNil(self.invalidMopubObject?.keywords)
         }
     }
+    
 }
